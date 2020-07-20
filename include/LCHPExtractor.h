@@ -99,7 +99,8 @@ namespace ORB_SLAM2 {
         std::vector<float> mvLevelSigma2;
         std::vector<float> mvInvLevelSigma2;
 
-        std::shared_ptr<torch::jit::script::Module> module;
+//        std::shared_ptr<torch::jit::script::Module> module;
+        torch::jit::script::Module module;
         torch::Device device = torch::kCUDA;
     };
 

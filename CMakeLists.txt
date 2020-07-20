@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(LCHP_SLAM_DBoW3)
+project(SSF-SLAM)
 
 #SET(CMAKE_BUILD_TYPE Release)
 SET(CMAKE_BUILD_TYPE Debug)
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
-set(Torch_DIR "/home/xddz/Sources/pytorch/torch/lib/tmp_install/share/cmake/Torch")
+set(Torch_DIR "/home/sheli/Sources/libtorch/share/cmake/Torch")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native")
 
 #Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX14)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+   add_definitions(-DCOMPILEDWITHC14)
+   message(STATUS "Using flag -std=c++14.")
+elseif(COMPILER_SUPPORTS_CXX11)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
    add_definitions(-DCOMPILEDWITHC11)
    message(STATUS "Using flag -std=c++11.")
@@ -24,6 +29,7 @@ elseif(COMPILER_SUPPORTS_CXX0X)
 else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
+
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
@@ -88,5 +94,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/LCHP)
 
 add_executable(rgbd_lchp LCHP/rgbd_lchp.cc)
 target_link_libraries(rgbd_lchp ${PROJECT_NAME} ${TORCH_LIBRARIES})
-set_property(TARGET rgbd_lchp PROPERTY CXX_STANDARD 11)
+#set_property(TARGET rgbd_lchp PROPERTY CXX_STANDARD 11)
+set_property(TARGET rgbd_lchp PROPERTY CXX_STANDARD 14)
 

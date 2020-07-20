@@ -1,3 +1,9 @@
 /build/
 /.idea/
 /cmake-build-debug/
+/LCHP/rgbd_lchp
+/Thirdparty/DBoW3/build/
+/Thirdparty/g2o/build/
+/lib/
+/Thirdparty/g2o/lib/
+/Thirdparty/DBoW3/lib/

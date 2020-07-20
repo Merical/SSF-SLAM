@@ -151,7 +151,7 @@ namespace ORB_SLAM2 {
         const char *net_fn = getenv("LCHP_PATH");
         net_fn = (net_fn == nullptr) ? "../model/lchpnet_v2_640_480_cpp_demo.pt" : net_fn;
         module = torch::jit::load(net_fn);
-        module->to(device);
+        module.to(device);
 
     }
 
@@ -167,13 +167,14 @@ namespace ORB_SLAM2 {
         image.convertTo(img, CV_32FC1, 1.f / 255.f, 0);
 
         int img_rows = 480, img_cols = 640;
-        auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(img.data, {1, img_rows, img_cols, 1});
+//        auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(img.data, {1, img_rows, img_cols, 1});
+        auto img_tensor = torch::from_blob(img.data, {1, img_rows, img_cols, 1});
         img_tensor = img_tensor.permute({0, 3, 1, 2});
         auto img_var = torch::autograd::make_variable(img_tensor, false).to(device);
 
         std::vector<torch::jit::IValue> inputs;
         inputs.push_back(img_var);
-        auto output = module->forward(inputs).toTuple();
+        auto output = module.forward(inputs).toTuple();
 
         auto pts = output->elements()[0].toTensor().to(torch::kCPU).squeeze();
         auto desc = output->elements()[1].toTensor().to(torch::kCPU).squeeze();
@@ -208,13 +209,14 @@ namespace ORB_SLAM2 {
         cv::Mat src = preprocess(image);
 
         int img_rows = 480, img_cols = 640;
-        auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(src.data, {1, img_rows, img_cols, 1});
+//        auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(src.data, {1, img_rows, img_cols, 1});
+        auto img_tensor = torch::from_blob(src.data, {1, img_rows, img_cols, 1});
         img_tensor = img_tensor.permute({0, 3, 1, 2});
         auto img_var = torch::autograd::make_variable(img_tensor, false).to(device);
 
         std::vector<torch::jit::IValue> inputs;
         inputs.push_back(img_var);
-        auto output = module->forward(inputs).toTuple();
+        auto output = module.forward(inputs).toTuple();
 
         auto pts = output->elements()[0].toTensor().to(torch::kCPU).squeeze();
         auto desc = output->elements()[1].toTensor().to(torch::kCPU).squeeze();

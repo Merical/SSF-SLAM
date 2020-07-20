@@ -72,7 +72,9 @@ int main(int argc, char **argv)
         }
 
 
-#ifdef COMPILEDWITHC11
+#ifdef COMPILEDWITHC14
+        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+#elif COMPILEDWITHC11
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 #else
         std::chrono::monotonic_clock::time_point t1 = std::chrono::monotonic_clock::now();
@@ -81,7 +83,9 @@ int main(int argc, char **argv)
         SLAM.TrackRGBD(imRGB,imD,tframe);
 
 
-#ifdef COMPILEDWITHC11
+#ifdef COMPILEDWITHC14
+        std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+#elif COMPILEDWITHC11
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 #else
         std::chrono::monotonic_clock::time_point t2 = std::chrono::monotonic_clock::now();

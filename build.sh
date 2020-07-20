@@ -21,5 +21,5 @@ echo "Configuring and building SSF-SLAM ..."
 
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/home/xddz/Sources/pytorch/torch/lib/tmp_install/share/cmake/Torch
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$HOME/Sources/libtorch/share/cmake/Torch
 make -j4

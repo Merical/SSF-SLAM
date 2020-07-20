@@ -239,13 +239,13 @@ void GCNextractor::operator()( InputArray _image, InputArray _mask, vector<KeyPo
     int img_width = 320;
     int img_height = 240;
 
-    auto img_tensor = torch::CPU(torch::kFloat32).tensorFromBlob(img.data, {1, img_height, img_width, 1});
+    auto img_tensor = torch::from_blob(img.data, {1, img_height, img_width, 1});
     img_tensor = img_tensor.permute({0,3,1,2});
     auto img_var = torch::autograd::make_variable(img_tensor, false).to(device);
 
     std::vector<torch::jit::IValue> inputs;
     inputs.push_back(img_var);
-    auto output = module->forward(inputs).toTuple();
+    auto output = module.forward(inputs).toTuple();
 
     auto pts  = output->elements()[0].toTensor().to(torch::kCPU).squeeze();
     auto desc = output->elements()[1].toTensor().to(torch::kCPU).squeeze();
