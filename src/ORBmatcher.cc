@@ -40,15 +40,19 @@ namespace ORB_SLAM2 {
 //const int ORBmatcher::TH_LOW = 50;
 //const int ORBmatcher::HISTO_LENGTH = 30;
 
+
+#ifdef COMPILEDWITHL2
+// L2
+const int ORBmatcher::TH_HIGH = 100; // 400 // 600
+const int ORBmatcher::TH_LOW = 50; //200
+const int ORBmatcher::HISTO_LENGTH = 50;
+#else
 // 8-bit L1
 const int ORBmatcher::TH_HIGH = 350; // 400 // 600
 const int ORBmatcher::TH_LOW = 250; //200
 const int ORBmatcher::HISTO_LENGTH = 50; //50
+#endif
 
-// L2
-//const int ORBmatcher::TH_HIGH = 200; // 400 // 600
-//const int ORBmatcher::TH_LOW = 100; //200
-//const int ORBmatcher::HISTO_LENGTH = 50;
 
 //const int ORBmatcher::TH_HIGH = 100; // 400 // 600
 //const int ORBmatcher::TH_LOW = 20; //200
@@ -193,10 +197,22 @@ const int ORBmatcher::HISTO_LENGTH = 50; //50
 //    cv::BFMatcher desc_matcher(cv::NORM_L1, false); // lch change here!!!
 //    desc_matcher.match(MPdescriptors, F.mDescriptors, matches, cv::Mat());
 
+#ifdef COMPILEDWITHL2
+        // L2
+        cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L2);
+        cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
+        cv::Mat FmDescriptors;
+        MPdescriptors.convertTo(MPdescriptors, CV_32F, 1, 0);
+        F.mDescriptors.convertTo(FmDescriptors, CV_32F, 1, 0);
+        desc_gpu_1.upload(MPdescriptors);
+        desc_gpu_2.upload(FmDescriptors);
+#else
+        // L1
         cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L1);
         cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
         desc_gpu_1.upload(MPdescriptors);
         desc_gpu_2.upload(F.mDescriptors);
+#endif
         desc_matcher->match(desc_gpu_1, desc_gpu_2, matches, cv::noArray());
 
         int nmatches = 0;
@@ -234,10 +250,22 @@ const int ORBmatcher::HISTO_LENGTH = 50; //50
         const cv::Mat &Descriptors2 = pKF2->mDescriptors;
 
         std::vector<cv::DMatch> matches;
+#ifdef COMPILEDWITHL2
+//        L2
+        cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L2);
+        cv::Mat descriptors1, descriptors2;
+        Descriptors1.convertTo(descriptors1, CV_32F, 1, 0);
+        Descriptors2.convertTo(descriptors2, CV_32F, 1, 0);
+        cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
+        desc_gpu_1.upload(descriptors1);
+        desc_gpu_2.upload(descriptors2);
+#else
+//L1
         cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L1);
         cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
         desc_gpu_1.upload(Descriptors1);
         desc_gpu_2.upload(Descriptors2);
+#endif
         desc_matcher->match(desc_gpu_1, desc_gpu_2, matches, cv::noArray());
 
         vpMatches12 = vector<MapPoint *>(vpMapPoints1.size(), static_cast<MapPoint *>(NULL));
@@ -284,10 +312,21 @@ const int ORBmatcher::HISTO_LENGTH = 50; //50
         std::vector<cv::DMatch> matches;
 //    cv::BFMatcher desc_matcher(cv::NORM_HAMMING, true);
 //    cv::BFMatcher desc_matcher(cv::NORM_L1, false); // lch change here!!!
+#ifdef COMPILEDWITHL2
+        cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L2);
+        cv::Mat Descriptors1, Descriptors2;
+        pKF->mDescriptors.convertTo(Descriptors1, CV_32F, 1, 0);
+        F.mDescriptors.convertTo(Descriptors2, CV_32F, 1, 0);
+        cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
+        desc_gpu_1.upload(Descriptors1);
+        desc_gpu_2.upload(Descriptors2);
+#else
+//        L1
         cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L1);
         cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
         desc_gpu_1.upload(pKF->mDescriptors);
         desc_gpu_2.upload(F.mDescriptors);
+#endif
         desc_matcher->match(desc_gpu_1, desc_gpu_2, matches, cv::noArray());
 
 //    desc_matcher.match(pKF->mDescriptors, F.mDescriptors, matches, cv::Mat());
@@ -339,10 +378,22 @@ const int ORBmatcher::HISTO_LENGTH = 50; //50
 //    cv::BFMatcher desc_matcher(cv::NORM_L1, false);
 //    desc_matcher.match(LastFrame.mDescriptors, CurrentFrame.mDescriptors, matches, cv::Mat());
 
+
+# ifdef COMPILEDWITHL2
+        cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L2);
+        cv::Mat Descriptors1, Descriptors2;
+        LastFrame.mDescriptors.convertTo(Descriptors1, CV_32F, 1, 0);
+        CurrentFrame.mDescriptors.convertTo(Descriptors2, CV_32F, 1, 0);
+        cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
+        desc_gpu_1.upload(Descriptors1);
+        desc_gpu_2.upload(Descriptors2);
+#else
+        //L1
         cv::Ptr<cv::cuda::DescriptorMatcher> desc_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(cv::NORM_L1);
         cv::cuda::GpuMat desc_gpu_1, desc_gpu_2;
         desc_gpu_1.upload(LastFrame.mDescriptors);
         desc_gpu_2.upload(CurrentFrame.mDescriptors);
+#endif
         desc_matcher->match(desc_gpu_1, desc_gpu_2, matches, cv::noArray());
 
         int nmatches = 0;
@@ -1805,7 +1856,11 @@ const int ORBmatcher::HISTO_LENGTH = 50; //50
     }
 
     float ORBmatcher::DescriptorDistance(const cv::Mat &a, const cv::Mat &b) {
+#ifdef COMPILEDWITHL2
+        float dist = (float) norm(a, b, cv::NORM_L2);
+#else
         float dist = (float) norm(a, b, cv::NORM_L1);
+#endif
         return dist;
     } //namespace ORB_SLAM
 }

@@ -7,3 +7,5 @@
 /lib/
 /Thirdparty/g2o/lib/
 /Thirdparty/DBoW3/lib/
+/LCHP/KeyFrameTrajectory.txt
+/LCHP/CameraTrajectory.txt

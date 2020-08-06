@@ -30,6 +30,7 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+#add_definitions(-DCOMPILEDWITHL2)
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
@@ -94,6 +95,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/LCHP)
 
 add_executable(rgbd_lchp LCHP/rgbd_lchp.cc)
 target_link_libraries(rgbd_lchp ${PROJECT_NAME} ${TORCH_LIBRARIES})
-#set_property(TARGET rgbd_lchp PROPERTY CXX_STANDARD 11)
 set_property(TARGET rgbd_lchp PROPERTY CXX_STANDARD 14)
+
+add_executable(stereo_lchp LCHP/stereo_lchp.cc)
+target_link_libraries(stereo_lchp ${PROJECT_NAME} ${TORCH_LIBRARIES})
+set_property(TARGET stereo_lchp PROPERTY CXX_STANDARD 14)
 
